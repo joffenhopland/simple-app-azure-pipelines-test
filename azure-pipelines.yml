@@ -1,0 +1,28 @@
+
+# Starter pipeline
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+steps:
+
+- task: FlutterInstall@0
+  inputs:
+    mode: 'auto'
+    channel: 'stable'
+    version: 'latest'
+- task: FlutterBuild@0
+  inputs:
+    target: 'web'
+    projectDirectory: '.'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/build/web'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'ci-artifact'
+    publishLocation: 'Container'
